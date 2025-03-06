@@ -3,7 +3,7 @@ set -x -e
 CHROOT=./ew2025-image
 RUN="sudo systemd-nspawn -D $CHROOT"
 RUN_USER="sudo systemd-nspawn -D $CHROOT -u user --chdir=/home/user"
-EXTRA_PACKAGES=openssh-server,sudo,kmod,linux-base,netbase,ifupdown,net-tools,python3,python3-pip,git,python3-libcamera,kmod,udev
+EXTRA_PACKAGES=openssh-server,sudo,kmod,linux-base,netbase,dhcpcd-base,dbus,ifupdown,net-tools,python3,python3-pip,git,python3-libcamera,kmod,udev,libcamera-ipa,dbus-user-session
 
 if [ ! -d $CHROOT ]; then
 
