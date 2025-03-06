@@ -9,7 +9,7 @@ if [ ! -d $CHROOT ]; then
 
    # Setup root filesystem
    mkdir $CHROOT
-   sudo debootstrap --variant=minbase --include=$EXTRA_PACKAGES testing $CHROOT http://deb.debian.org/debian/
+   sudo debootstrap --arch=arm64 --include=$EXTRA_PACKAGES testing $CHROOT http://deb.debian.org/debian/
    sudo mkdir $CHROOT/lib/modules
 
    # Setup chroot
