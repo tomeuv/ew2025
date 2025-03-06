@@ -5,6 +5,8 @@ RUN="sudo systemd-nspawn -D $CHROOT"
 RUN_USER="sudo systemd-nspawn -D $CHROOT -u user --chdir=/home/user"
 EXTRA_PACKAGES=openssh-server,sudo,kmod,linux-base,netbase,dhcpcd-base,dbus,ifupdown,net-tools,python3,python3-pip,git,python3-libcamera,udev,libcamera-ipa,dbus-user-session,vim
 
+MESA_SRC=./mesa/
+MESA_REPO=https://gitlab.freedesktop.org/tomeu/mesa.git
 SSH_ID_PUB=$HOME/.ssh/id_rsa.pub
 
 if [ ! -d $CHROOT ]; then
@@ -52,7 +54,13 @@ EOF
    sudo su -c "echo deb-src http://deb.debian.org/debian testing main >> $CHROOT/etc/apt/sources.list"
    $RUN apt-get update
    $RUN apt-get -y build-dep mesa
-   sudo git clone -b imx8mp-demo-ew2025 ~/src/mesa $CHROOT/home/user/mesa
+
+   # Clone Tomeu's mesa fork if a 'mesa' directory is not available
+   if [ ! -d $MESA_SRC ] ; then
+	   git clone $MESA_REPO -b imx8mp-demo-ew2025 $MESA_SRC
+   fi
+   sudo rsync -av $MESA_SRC $CHROOT/home/user/mesa
    $RUN chown -R user:user /home/user/mesa
+
    $RUN_USER bash ./build-mesa.sh
 fi
