@@ -1,0 +1,16 @@
+[Unit]
+Description=Run ew2025 demo at boot
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash /home/user/run-demo.sh
+Environment="PYTHONPATH=/home/user"
+WorkingDirectory=/home/user
+User=user
+Group=user
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -362,7 +362,8 @@ def main():
     sel = selectors.DefaultSelector()
     sel.register(camstate.cm.event_fd, selectors.EVENT_READ, camstate.handle_req)
     sel.register(kmsstate.card.fd, selectors.EVENT_READ, kmsstate.readdrm)
-    sel.register(sys.stdin, selectors.EVENT_READ, handle_key_event)
+    if sys.stdin.isatty():
+        sel.register(sys.stdin, selectors.EVENT_READ, handle_key_event)
 
     running = True
 
