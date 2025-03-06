@@ -5,6 +5,8 @@ RUN="sudo systemd-nspawn -D $CHROOT"
 RUN_USER="sudo systemd-nspawn -D $CHROOT -u user --chdir=/home/user"
 EXTRA_PACKAGES=openssh-server,sudo,kmod,linux-base,netbase,dhcpcd-base,dbus,ifupdown,net-tools,python3,python3-pip,git,python3-libcamera,udev,libcamera-ipa,dbus-user-session,vim
 
+SSH_ID_PUB=$HOME/.ssh/id_rsa.pub
+
 if [ ! -d $CHROOT ]; then
 
    # Setup root filesystem
@@ -37,7 +39,7 @@ EOF
    # Setup SSH
    $RUN_USER mkdir /home/user/.ssh
    $RUN_USER chmod 700 /home/user/.ssh
-   sudo cat $HOME/.ssh/id_rsa.2.pub > $CHROOT/home/user/.ssh/authorized_keys
+   sudo cat $SSH_ID_PUB > $CHROOT/home/user/.ssh/authorized_keys
    $RUN_USER chmod 600 /home/user/.ssh/authorized_keys
 
    # Setup demo
