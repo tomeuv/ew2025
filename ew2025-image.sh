@@ -38,6 +38,10 @@ EOF
    sudo cp -rf tflite_runtime-2.16.2-cp313-cp313-linux_aarch64.whl $CHROOT/home/user/.
    sudo su -c "echo user ALL=\(ALL\) NOPASSWD: ALL >> $CHROOT/etc/sudoers"
 
+   # Setup systemd unit to run demo at boot
+   sudo cp ew2025.service $CHROOT/etc/systemd/system/
+   sudo ln -s $CHROOT/etc/systemd/system/ $CHROOT//etc/systemd/system/multi-user.target.wants/ew2025.service
+
    # Setup SSH
    $RUN_USER mkdir /home/user/.ssh
    $RUN_USER chmod 700 /home/user/.ssh
