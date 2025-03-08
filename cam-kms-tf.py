@@ -261,7 +261,8 @@ class CamState:
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
 
         # Draw framerate in corner of frame
-        cv2.putText(frame,'FPS: {0:.2f}'.format(self.kmsstate.fps.fps),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
+        cv2.putText(frame,'CAM FPS: {0:.2f}'.format(self.kmsstate.fps.fps),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
+        cv2.putText(frame,'KMS FPS: {0:.2f}'.format(self.cam_fps.fps),(30,100),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
 
         return frame
 
