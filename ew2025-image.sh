@@ -15,9 +15,9 @@ if [ ! -d $CHROOT/etc ]; then
    sudo debootstrap --arch=arm64 --include=$EXTRA_PACKAGES testing $CHROOT http://deb.debian.org/debian/
    sudo mkdir $CHROOT/lib/modules
 
-   # Setup chroot
-   sudo cp /etc/hosts $CHROOT/etc/hosts
-   sudo cp /proc/mounts $CHROOT/etc/mtab
+   # Setup boot
+   sudo cp uEnv.txt $CHROOT/.
+   sudo cp -rf ./boot $CHROOT/.
 
    # Setup host name
    sudo su -c "echo ew2025 > $CHROOT/etc/hostname"
