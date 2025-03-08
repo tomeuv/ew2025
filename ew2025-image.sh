@@ -1,6 +1,6 @@
 set -x -e
 
-CHROOT=./ew2025-image
+CHROOT=$1
 RUN="sudo systemd-nspawn -D $CHROOT"
 RUN_USER="sudo systemd-nspawn -D $CHROOT -u user --chdir=/home/user"
 EXTRA_PACKAGES=openssh-server,sudo,kmod,linux-base,netbase,dhcpcd-base,dbus,ifupdown,net-tools,python3,python3-pip,git,python3-libcamera,udev,libcamera-ipa,dbus-user-session,vim
@@ -9,10 +9,9 @@ MESA_SRC=./mesa/
 MESA_REPO=https://gitlab.freedesktop.org/tomeu/mesa.git
 SSH_ID_PUB=$HOME/.ssh/id_rsa.pub
 
-if [ ! -d $CHROOT ]; then
+if [ ! -d $CHROOT/etc ]; then
 
    # Setup root filesystem
-   mkdir $CHROOT
    sudo debootstrap --arch=arm64 --include=$EXTRA_PACKAGES testing $CHROOT http://deb.debian.org/debian/
    sudo mkdir $CHROOT/lib/modules
 
