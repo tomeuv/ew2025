@@ -7,7 +7,9 @@ import mmap
 import os
 import selectors
 import sys
+from threading import Thread
 import time
+from queue import Queue
 
 from collections import deque
 from pixutils import dmaheap
@@ -197,6 +199,9 @@ class CamState:
         with open(labels, 'r') as f:
             self.labels = [line.strip() for line in f.readlines()]
 
+        self.req_queue = Queue()
+        self.process_thread = Thread(target=self.process_frame, args=[]).start()
+
     def add_req(self, mybuf: MyBuf):
         # Use the buffer index as the cookie
         req = self.cam.create_request(mybuf.idx)
@@ -260,12 +265,11 @@ class CamState:
 
         return frame
 
-    def handle_req(self):
-        self.cam_fps.tick()
+    def process_frame(self):
+        while True:
+            req = self.req_queue.get()
+            self.cam_fps.tick()
 
-        reqs = self.cm.get_ready_requests()
-
-        for req in reqs:
             buffers = req.buffers
 
             assert len(buffers) == 1
@@ -292,6 +296,12 @@ class CamState:
             dmabuf_sync_end(mybuf.fb.planes[0].prime_fd, write=1)
 
             self.kmsstate.queue_new_frame(mybuf)
+
+    def handle_req(self):
+        reqs = self.cm.get_ready_requests()
+
+        for req in reqs:
+            self.req_queue.put(req)
 
 
 def main():
