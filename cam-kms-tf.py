@@ -242,7 +242,7 @@ class CamState:
 
         # Loop over all detections and draw detection box if confidence is above minimum threshold
         for i in range(len(scores)):
-            if (scores[i] <= 0.55) or (scores[i] > 1.0):
+            if (scores[i] <= 0.56) or (scores[i] > 1.0):
                 continue
 
             # Get bounding box coordinates and draw box
