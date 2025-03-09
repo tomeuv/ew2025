@@ -7,7 +7,7 @@ import mmap
 import os
 import selectors
 import sys
-from threading import Thread
+from threading import Thread, Lock
 import time
 from queue import Queue
 
@@ -65,6 +65,7 @@ class KMSState:
 
         self.mybufs = mybufs
         self.queue_buf = queue_buf
+        self.kms_lock = Lock()
 
         card = kms.Card()
         res = kms.ResourceManager(card)
@@ -119,26 +120,27 @@ class KMSState:
             self.handle_page_flip()
 
     def handle_page_flip(self):
-        self.fps.tick()
+        with self.kms_lock:
+            self.fps.tick()
 
-        assert self.current_fb
+            assert self.current_fb
 
-        if self.prev_fb:
-            self.queue_buf(self.prev_fb)
-            self.prev_fb = None
+            if self.prev_fb:
+                self.queue_buf(self.prev_fb)
+                self.prev_fb = None
 
-        # Did we have something committed? If so, it's now current
-        if self.next_fb:
-            self.prev_fb = self.current_fb
-            self.current_fb = self.next_fb
-            self.next_fb = None
+            # Did we have something committed? If so, it's now current
+            if self.next_fb:
+                self.prev_fb = self.current_fb
+                self.current_fb = self.next_fb
+                self.next_fb = None
 
-        if len(self.in_queue) > 0:
-            self.next_fb = self.in_queue.popleft()
+            if len(self.in_queue) > 0:
+                self.next_fb = self.in_queue.popleft()
 
-            ctx = kms.AtomicReq(self.card)
-            ctx.add(self.crtc.primary_plane, "FB_ID", self.next_fb.fb.id)
-            ctx.commit()
+                ctx = kms.AtomicReq(self.card)
+                ctx.add(self.crtc.primary_plane, "FB_ID", self.next_fb.fb.id)
+                ctx.commit()
 
     def readdrm(self):
         for ev in self.card.read_events():
